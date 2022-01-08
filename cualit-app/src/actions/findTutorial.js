@@ -14,8 +14,8 @@ const findTutorial =
       dispatch({ type: FIND_TUTORIALS });
 
       const result = await axios.get(`${findTutorialUrl}?title=${title}`);
-      const { data } = result;
 
+      const { data } = result?.data;
       if (data?.length) {
         dispatch({
           type: FIND_TUTORIALS_SUCCESS,

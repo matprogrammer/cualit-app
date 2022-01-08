@@ -51,7 +51,9 @@ const EditTutorial = ({
 }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [checked, setChecked] = useState(true);
+  const [video, setVideo] = useState('');
+  const [checked, setChecked] = useState(null);
+
   const { id } = useParams();
   const history = useHistory();
 
@@ -61,6 +63,7 @@ const EditTutorial = ({
       if (result) {
         setTitle(result.title);
         setDescription(result.description);
+        setVideo(result.video);
         setChecked(result.published);
       }
     }
@@ -68,17 +71,12 @@ const EditTutorial = ({
   }, []);
 
   const edit = async () => {
-    if (title !== '' && description !== '') {
-      console.log({
-        title: title,
-        description: description,
-        published: checked,
-      });
-
+    if (title !== '' && checked !== null) {
       const response = await editTutorial({
         id: id,
         title: title,
         description: description,
+        video: video,
         published: checked,
       });
       if (response.success) {
@@ -91,7 +89,7 @@ const EditTutorial = ({
     } else {
       showToast({
         status: true,
-        message: 'Todos los campos son requeridos',
+        message: 'El titulo y el estado son requeridos',
         type: ErrorType.WARNING,
       });
     }
@@ -140,6 +138,15 @@ const EditTutorial = ({
                   placeholder="Descripción"
                   onChange={(e) => setDescription(e.target.value)}
                   value={description}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Video Url</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Video"
+                  onChange={(e) => setVideo(e.target.value)}
+                  value={video}
                 />
               </Form.Group>
               <Form.Label>Como quieres mantener el tutorial?</Form.Label>

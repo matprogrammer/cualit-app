@@ -85,7 +85,9 @@ const Body = ({ items, isLoading, removeAll, findTutorial, showToast }) => {
               value={title}
               onFocus={() => {
                 setTutorial(null);
+                setTitle('');
                 setItemSelected(false);
+                setTutorials(items);
               }}
             />
             <Button onClick={findTuto} variant="outline-secondary">
@@ -127,6 +129,9 @@ const Body = ({ items, isLoading, removeAll, findTutorial, showToast }) => {
                     </Info>
                     <Info>
                       Descripción: <InfoText>{tutorial?.description}</InfoText>
+                    </Info>
+                    <Info>
+                      Video URL: <InfoText>{tutorial?.video}</InfoText>
                     </Info>
                     <Info>
                       Estado: <InfoText>{status()}</InfoText>

@@ -45,7 +45,6 @@ const Home = ({
 
   const deleteAllTutorials = async () => {
     const response = await removeAllTutorials();
-    console.log(response.message);
     if (response.message) {
       setReload(true);
       showToast({

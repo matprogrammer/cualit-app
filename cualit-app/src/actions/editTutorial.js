@@ -6,29 +6,35 @@ import {
 } from '../types/actionTypes';
 
 import { editTutorialUrl } from '../constants/urls';
+import { getToken } from '../utils/sessionStorage';
 
 const editTutorial =
-  ({ id, title, description, published }) =>
+  ({ id, title, description, published, video }) =>
   async (dispatch) => {
     try {
       dispatch({ type: EDIT_TUTORIAL });
 
-      const result = await axios.put(`${editTutorialUrl}/${id}`, {
-        title: title,
-        description: description,
-        published: published,
-      });
-      const { data } = result;
-      if (data.success) {
-        dispatch({
-          type: EDIT_TUTORIAL_SUCCESS,
+      const token = await getToken();
+      if (token) {
+        const result = await axios.put(`${editTutorialUrl}/${id}`, {
+          title,
+          description,
+          published,
+          video,
+          token,
         });
-        return data;
-      } else {
-        dispatch({
-          type: EDIT_TUTORIAL_ERROR,
-        });
-        return false;
+        const { data } = result;
+        if (data.success) {
+          dispatch({
+            type: EDIT_TUTORIAL_SUCCESS,
+          });
+          return data;
+        } else {
+          dispatch({
+            type: EDIT_TUTORIAL_ERROR,
+          });
+          return false;
+        }
       }
     } catch (error) {
       dispatch({

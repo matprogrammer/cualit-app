@@ -11,6 +11,7 @@ import Form from 'react-bootstrap/Form';
 import Card from 'react-bootstrap/Card';
 
 import Button from 'react-bootstrap/Button';
+import { isValidURL } from '../../utils/utils';
 
 const Container = styled.div`
   display: flex;
@@ -28,33 +29,6 @@ const Body = styled.div`
   align-items: center;
 `;
 
-const Title = styled.span`
-  color: #363636;
-  font-size: 24px;
-  font-weight: 500;
-  line-height: 50px;
-  text-align: left;
-  width: 100%;
-  margin-top: 30px;
-`;
-
-const Input = styled.input`
-  height: 30px;
-`;
-
-const Submit = styled.span`
-  width: 100px;
-  text-align: center;
-  line-height: 30px;
-  height: 30px;
-  border-radius: 10px;
-  color: white;
-  font-weight: 500;
-  cursor: pointer;
-  background: #99cc33;
-  margin-top: 25px;
-`;
-
 const CardContainer = styled(Card)`
   width: 50vw;
   top: 50px;
@@ -63,28 +37,40 @@ const CardContainer = styled(Card)`
 const CreateTutorial = ({ addTutorial, toastProps, showToast }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [checked, setChecked] = useState(true);
+  const [video, setVideo] = useState('');
+  const [checked, setChecked] = useState(null);
 
   const create = async () => {
-    if (title !== '' && description !== '') {
-      const response = await addTutorial({
-        title: title,
-        description: description,
-        published: checked,
-      });
-      if (response) {
-        setTitle('');
-        setDescription('');
+    if (title !== '' && checked !== null) {
+      if (video && !isValidURL(video)) {
         showToast({
           status: true,
-          message: 'El tutorial se creo correctamente!',
-          type: ErrorType.SUCCESS,
+          message: 'La url es invalida!',
+          type: ErrorType.ERROR,
         });
+      } else {
+        console.log(video);
+        const response = await addTutorial({
+          title,
+          description,
+          video,
+          published: checked,
+        });
+        if (response) {
+          setTitle('');
+          setDescription('');
+          setVideo('');
+          showToast({
+            status: true,
+            message: 'El tutorial se creo correctamente!',
+            type: ErrorType.SUCCESS,
+          });
+        }
       }
     } else {
       showToast({
         status: true,
-        message: 'Todos los campos son requeridos',
+        message: 'El titulo y el estado son requeridos',
         type: ErrorType.WARNING,
       });
     }
@@ -114,6 +100,15 @@ const CreateTutorial = ({ addTutorial, toastProps, showToast }) => {
                   placeholder="Descripción"
                   onChange={(e) => setDescription(e.target.value)}
                   value={description}
+                />
+              </Form.Group>
+              <Form.Group className="mb-3">
+                <Form.Label>Video Url</Form.Label>
+                <Form.Control
+                  type="text"
+                  placeholder="Video"
+                  onChange={(e) => setVideo(e.target.value)}
+                  value={video}
                 />
               </Form.Group>
               <Form.Label>Como quieres mantener el tutorial?</Form.Label>
